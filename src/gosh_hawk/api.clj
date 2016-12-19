@@ -17,8 +17,6 @@
 (s/def ::conn  #(instance? Connection))
 (s/def ::conn-factory #(instance? ConnectionFactory))
 
-(declare cf)
-
 (defn connection-factory
   "Create a new connection factory. Generally used internally only"
   ([] (ConnectionFactory.))
@@ -27,7 +25,12 @@
 (s/fdef connection-factory
   :ret ::conn-factory)
 
-(def cf (delay (ConnectionFactory.)))
+(def cf (delay (connection-factory)))
+
+(defn read-certs
+  [fname]
+  (doto (Certs.)
+    (.parseClientPEM (io/reader fname))))
 
 (defn connect
   ([client-cert-pem host]         (connect @cf client-cert-pem host 7894))
